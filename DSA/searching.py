@@ -2,7 +2,7 @@ class SearchingServer:
     def __init__(self):
         pass
     
-    # fungsi mencari server berdasarkan ip menggunakan binary search
+    # fungsi mencari server berdasarkan nama server menggunakan binary search
     def cari_server(self, data, target):
         data.sort()
         left = 0
@@ -15,13 +15,15 @@ class SearchingServer:
             
             if data[mid].nama == target:
                 print('FOUND:')
-                print(f'Server : {data.nama}')
+                print(f'Server_Name : {data.nama}')
+                print(f'Server_Id : {data.id}')
                 print(f'IP : {data.ip}')
+                print(f'Status : {data.status}')
                 return
             
             if data[mid].nama < target:
                 left = mid + 1
             else:
                 right = mid - 1
-        
-        print('IP Tidak Ditemukan!')
+        else:
+            print('IP Tidak Ditemukan!')
