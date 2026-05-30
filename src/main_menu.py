@@ -9,6 +9,7 @@ import os
 
 # Implementasi dari questionary.select()
 from utils.menu_utils import make_menu_selection_question
+from DSA.linked_list.single import TrafficQueue
 
 from rich.console import Console, Group
 from rich.panel import Panel
@@ -21,6 +22,7 @@ from rich_pyfiglet import RichFiglet
 class MainMenu:
     def __init__(self):
         self.console = Console()
+        self.traffic = TrafficQueue("src/data/dalam-json/traffic.json")
 
     def clear_screen(self):
         command = "cls" if os.name == "nt" else "clear"
@@ -89,6 +91,8 @@ class MainMenu:
         if choice == 0:
             with self.console.status("[bold red]Exiting..."):
                 time.sleep(0.5)
+                self.clear_screen()
+                return
 
         self.sub_menu(choice)
 
@@ -213,7 +217,7 @@ class MainMenu:
         self.header_menu("SUB MENU", "Traffic Queue")
 
         # TODO: Ganti dengan ukuran antrian yang sebenarnya
-        self.console.print("Queue Size: N", end="\n\n", style="bold yellow")
+        self.console.print(f"Queue Size: {self.traffic.size()}", end="\n\n", style="bold yellow")
 
         choice = make_menu_selection_question(
             question=[
@@ -237,8 +241,21 @@ class MainMenu:
     # TODO: [3.1] "Tampilkan Queue Traffic"
     def tampilkan_queue_traffic(self):
         '''[3.1] "Tampilkan Queue Traffic"'''
-        pass
 
+        self.traffic.display()
+
+        choice = make_menu_selection_question(
+            question=[
+                "Kembali ke Traffic Queue"
+            ],
+            value=[0],
+        ).ask()
+
+        match choice:
+            case 0:
+                self.traffic_queue_menu()
+
+    # TODO: [3.2] "Kelola Traffic"
     def kelola_traffic(self):
         '''[3.2] "Kelola Traffic"'''
         self.clear_screen()
@@ -249,21 +266,54 @@ class MainMenu:
             question=[
                 "Lihat Traffic Terdepan",
                 "Proses Traffic Terdepan",
-                "Kembali ke Beranda",
+                "Kembali ke Traffic Queue",
             ],
             value=[1, 2, 0],
         ).ask()
 
         match choice:
             case 1:
-                # Handle "Tampilkan Queue Traffic"
-                pass
+                # Handle "Lihat Traffic Terdepan"
+                self.lihat_traffic_terdepan_traffic()
             case 2:
                 # Handle "Proses Traffic Terdepan"
-                pass
+                self.proses_traffic_terdepan_traffic()
             case 0:
                 # naik ke [3] Traffic Queue
                 self.traffic_queue_menu()
+    
+    # TODO: [3.2.1] "Lihat Traffic Terdepan"
+    def lihat_traffic_terdepan_traffic(self):
+        '''[3.2.1] "Lihat Traffic Terdepan"'''
+        self.traffic.display_front()
+
+        choice = make_menu_selection_question(
+            question=[
+                "Kembali ke Kelola Traffic"
+            ],
+            value=[0],
+        ).ask()
+
+        match choice:
+            case 0:
+                self.kelola_traffic()
+    
+    # TODO: [3.2.2] "Proses Traffic Terdepan"
+    def proses_traffic_terdepan_traffic(self):
+        '''[3.2.2] "Proses Traffic Terdepan"'''
+        self.traffic.display_dequeue()
+
+        choice = make_menu_selection_question(
+            question=[
+                "Kembali ke Kelola Traffic"
+            ],
+            value=[0],
+        ).ask()
+
+        match choice:
+            case 0:
+                self.kelola_traffic()
+
 
     # TODO: [4] Struktur Data
     def struktur_data_menu(self):
