@@ -7,9 +7,10 @@ import time
 import datetime
 import subprocess
 import os
-
+import sys
 import json
 from pathlib import Path
+
 
 import questionary
 from questionary import Style
@@ -22,6 +23,7 @@ from rich.rule import Rule
 from rich_pyfiglet import RichFiglet
 
 from src.filehandler import FileHandler
+
 
 
 class MainMenu:
@@ -418,16 +420,15 @@ class MainMenu:
         
         self.console.print("Daftar Folder Server:", style="bold green")
         for idx, servers in enumerate(data, start=1):
-            self.console.print(f"{idx}. {servers['server_name']}")
+            is_last = idx == len(data) - 1
+            connector = "└── " if is_last else "├── "
+            print(f"{sys.prefix}{connector}{idx}. {servers['server_name']}")
             for folder in servers["folders"]:
-                if folder["folder_name"] == "system":
-                    self.console.print(f"System Folder:")
-                    for file_name, file_size in folder["system"].items():
-                        self.console.print(f"   - {file_name} : ({file_size})")
-                elif folder["folder_name"] == "cdn":
-                    self.console.print(f"CDN Folder:")
-                    for file_name, file_size in folder["cdn"].items():
-                        self.console.print(f"   - {file_name} : ({file_size})")
+                extension = "    " if is_last else "│   "
+                print(f"{sys.prefix}{extension}{folder}")
+                if folder.is_dict():
+                    for file in folder["files"]:
+                        print(f"{sys.prefix}{extension}{file}")
 
     # [4.2] "Kelola Stack Log Aktivitas"
     def kelola_stack_log_aktivitas_data(self):
